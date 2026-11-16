@@ -1,0 +1,51 @@
+# device_driver.ibl - Hardware interface and memory layout test
+module driver
+
+require "./math_utils"
+
+# Enums and Error types
+Status enum
+    Ready
+    Busy
+    Fault
+end
+
+DeviceError error
+    Timeout
+    Overheat
+    BufferOverflow
+end
+
+# Packed hardware register record with explicit alignment
+align(1) packed record RegisterConfig
+    enabled: u1
+    mode: u3
+    reserved: u4
+    baud_rate: u16
+end
+
+# Interface demonstrating inverted relationship (vtable slot + concrete helper)
+Controller interface
+    id: u32
+    
+    # Function pointer field (vtable slot to implement)
+    poll: function(self: ^Controller): Status
+    
+    # Concrete helper function available to consumers
+    function reset(self: ^Controller)
+        var target_id: u32 = self.id
+    end
+end
+
+# C Interoperability and cleanup with defer
+export function hw_init(cfg: ^RegisterConfig): c_int
+    var result: c_int = 0
+
+
+    # Ensure cleanup runs on scope exit
+    defer hw_teardown()
+    
+    return result
+end
+
+extern function hw_teardown()

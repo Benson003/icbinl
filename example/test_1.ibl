@@ -1,0 +1,33 @@
+# math_utils.ibl - Core mathematical utilities and distinct types
+module math_utils
+
+# Distinct types for type safety
+pub Celsius distinct f32
+pub Fahrenheit distinct f32
+
+pub const PI: f32 = 3.14159
+pub const MAX_RETRIES: u32 = 10
+
+# Bitwise manipulation helper
+pub function process_bits(val: u32, shift: u32): u32
+    # Test unary bitwise NOT (~), compound shifts (<<=, >>=)
+    var mask: u32 = ~val
+    
+    if mask < 100 then
+        mask <<= shift
+    elseif mask == 255 then
+        mask >>= 1
+    else
+        mask = mask << 2
+    end
+    
+    return mask
+end
+
+# Logical check using unary NOT (!)
+pub function check_status(is_ready: u1): u1
+    if !is_ready then
+        return 0
+    end
+    return 1
+end
