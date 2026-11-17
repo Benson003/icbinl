@@ -19,13 +19,12 @@ ICBINL strips away Lua's runtime dynamicism and global leakage traps, replacing 
 | Keyword Category | Keywords Included |
 | :--- | :--- |
 | **Declarations** | `module`, `require`, `record`, `interface`, `enum`, `error`, `union`, `var`, `const`, `function`, `pub`, `distinct` |
-| **Control Flow & Blocks** | `if`, `then`, `elseif`, `else`,`orelse`, `while`, `do`, `for`, `in`, `end`, `return`, `switch`, `case`, `defer`, `break`, `continue` |
+| **Control Flow & Blocks** | `if`, `then`, `elseif`, `else`,`orelse`, `while`, `do`, `for`, `in`, `end`, `return`, `switch`, `case`, `defer`, `break`, `continue`,`unreachable` |
 | **Metaprogramming** | `comptime` |
 | **C ABI & Interop** | `extern`, `export` |
 | **Memory & Layout** | `align`, `packed` |
 | **Directives & Testing** | `inline`, `noinline`, `callconv`, `addrspace`, `linksection`, `test` |
 
-**Total Keyword Count:** 36 keywords.
 
 *(Note: Identifiers prefixed with `__icbnl_` are reserved as internal compiler variables `.comp_var`, and `@` prefixes denote compiler builtins `.builtin`.)*
 
