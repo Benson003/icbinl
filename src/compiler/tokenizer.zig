@@ -157,7 +157,7 @@ pub const Token = struct {
         comment,
         invalid,
         eof,
-        newline,
+        semicolon, // This is for ASI
 
         pub fn lexeme(tag: Tag) ?[]const u8 {
             return switch (tag) {
@@ -208,7 +208,6 @@ pub const Token = struct {
                 .keyword_addrspace => "addrspace",
                 .keyword_linksection => "linksection",
                 .keyword_test => "test",
-
                 .question_mark => "?",
                 .dot => ".",
                 .dot2 => "..",
@@ -254,7 +253,7 @@ pub const Token = struct {
                 .l_bracket => "[",
                 .r_bracket => "]",
                 .comma => ",",
-                .newline => "\n",
+                .semicolon => "\n",
             };
         }
 
@@ -288,6 +287,7 @@ const token_string =
     \\
 ;
 pub const Tokenizer = struct {
+    last_token_tag: Token.Tag,
     index: u32,
     buffer: [:0]const u8,
 
@@ -301,8 +301,28 @@ pub const Tokenizer = struct {
         try writer.flush();
     }
 
+    pub fn isValidASIToken(self: Tokenizer) bool {
+        return switch (self.last_token_tag) {
+            .identifier,
+            .keyword_continue,
+            .keyword_break,
+            .keyword_return,
+            .number_literal,
+            .char_literal,
+            .multi_line_string_literal,
+            .dot_star,
+            .dot_question_mark,
+            .comp_var,
+            .r_paren,
+            .r_brace,
+            => true,
+            else => false,
+        };
+    }
+
     pub fn init(buffer: [:0]const u8) Tokenizer {
         return .{
+            .last_token_tag = undefined,
             .buffer = buffer,
             .index = if (std.mem.startsWith(u8, buffer, "\xEF\xBB\xBF")) 3 else 0,
         };
@@ -342,6 +362,7 @@ pub const Tokenizer = struct {
         carraige_return,
         dot,
         dot_dot,
+        newline,
     };
     pub fn next(self: *Tokenizer) Token {
         var result: Token = .{
@@ -373,11 +394,6 @@ pub const Tokenizer = struct {
                     result.loc.start = self.index;
                     continue :state .start;
                 },
-                '\n' => {
-                    self.index += 1;
-                    result.tag = .newline;
-                },
-
                 ',' => {
                     self.index += 1;
                     result.tag = .comma;
@@ -440,6 +456,7 @@ pub const Tokenizer = struct {
                     continue :state .multi_line_string;
                 },
 
+                '\n' => continue :state .newline,
                 '#' => continue :state .comment,
                 '\r' => continue :state .carraige_return,
                 '.' => continue :state .dot,
@@ -460,14 +477,29 @@ pub const Tokenizer = struct {
                 else => continue :state .invalid,
             },
 
-            .carraige_return => {
+            .newline => {
                 self.index += 1;
-                switch (self.buffer[self.index]) {
-                    '\n' => continue :state .start,
-                    else => result.tag = .newline,
+                if (self.isValidASIToken()) {
+                    result.tag = .semicolon;
+                } else {
+                    result.loc.start = self.index;
+                    continue :state .start;
                 }
             },
 
+            .carraige_return => {
+                self.index += 1;
+                if (self.index < self.buffer.len and self.buffer[self.index] == '\n') {
+                    self.index += 1;
+                }
+
+                if (self.isValidASIToken()) {
+                    result.tag = .semicolon;
+                } else {
+                    result.loc.start = self.index;
+                    continue :state .start;
+                }
+            },
             .dot => {
                 self.index += 1;
                 switch (self.buffer[self.index]) {
@@ -860,6 +892,7 @@ pub const Tokenizer = struct {
         }
 
         result.loc.end = self.index;
+        self.last_token_tag = result.tag;
         return result;
     }
 };
