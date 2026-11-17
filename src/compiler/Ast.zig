@@ -126,6 +126,8 @@ pub const Node = struct {
         defer_stmt,
         comptime_block,
 
+        field_acesss,
+        unwrap_optional,
         assign,
         assign_destructre,
         plus,
@@ -161,11 +163,131 @@ pub const Node = struct {
         array_access,
         array_init,
         record_init,
-        ptr_type,
         slice_open,
         slice,
         deref,
         call,
+        container_decl,
+        container_decl_arg,
+        block,
+        ptr_type,
+        ptr_type_senitnel,
     };
-    pub const Data = union {};
+    pub const Data = union {
+        node: Index,
+        opt_node: OptionalIndex,
+        token_index: TokenIndex,
+        node_and_node: struct { Index, Index },
+        opt_node_and_opt_node: struct { OptionalIndex, OptionalIndex },
+        node_and_opt_node: struct { Index, OptionalIndex },
+        opt_node_and_node: struct { OptionalIndex, Index },
+        node_and_extra: struct { Index, ExtraIndex },
+        extra_and_node: struct { ExtraIndex, Index },
+        extra_and_opt_node: struct { ExtraIndex, OptionalIndex },
+        node_and_token: struct { Index, TokenIndex },
+        token_and_node: struct { TokenIndex, Index },
+        token_and_token: struct { TokenIndex, TokenIndex },
+        opt_node_and_token: struct { OptionalIndex, TokenIndex },
+        opt_token_and_node: struct { OptionalTokenIndex, Index },
+        opt_token_and_opt_node: struct { OptionalTokenIndex, OptionalIndex },
+        opt_token_and_opt_token: struct { OptionalTokenIndex, OptionalTokenIndex },
+        extra_range: SubRange,
+    };
+
+    pub const SubRange = struct {
+        /// Index into extra_data.
+        start: ExtraIndex,
+        /// Index into extra_data.
+        end: ExtraIndex,
+    };
+};
+
+pub const full = struct {
+    pub const Module = struct {
+        mod_token: TokenIndex,
+        name: TokenIndex,
+    };
+
+    pub const Require = struct {
+        mod_token: TokenIndex,
+        name: TokenIndex,
+    };
+
+    pub const TypeDef = struct {
+        type: TokenIndex,
+        identfier: TokenIndex,
+        strong: bool,
+    };
+
+    pub const ContainerField = struct {
+        comptime_token: ?TokenIndex,
+        ast: Components,
+        pub const Components = struct {
+            main_token: TokenIndex,
+            type_expr: Node.OptionalIndex,
+            align_expr: Node.OptionalIndex,
+            value_expr: Node.OptionalIndex,
+        };
+        pub fn firstToken(cf: ContainerField) TokenIndex {
+            return cf.comptime_token orelse cf.ast.main_token;
+        }
+    };
+
+    pub const ContainerDecl = struct {
+        packed_token: ?TokenIndex,
+        align_node: ?Node.Index,
+        ast: Components,
+        pub const Components = struct {
+            main_token: TokenIndex,
+            members: []const Node.Index,
+            arg: Node.OptionalIndex,
+        };
+    };
+
+    pub const VarDecl = struct {
+        visib_token: ?TokenIndex,
+        extern_export_token: ?TokenIndex,
+        comptime_token: ?TokenIndex,
+        ast: Components,
+        pub const Components = struct {
+            mut_token: TokenIndex,
+            type_node: Node.OptionalIndex,
+            align_node: Node.OptionalIndex,
+            addrspace_node: Node.OptionalIndex,
+            section_node: Node.OptionalIndex,
+            init_node: Node.OptionalIndex,
+        };
+        pub fn firstToken(var_decl: VarDecl) TokenIndex {
+            return var_decl.visib_token orelse
+                var_decl.extern_export_token orelse
+                var_decl.comptime_token orelse
+                var_decl.ast.mut_token;
+        }
+    };
+    pub const Switch = struct {
+        ast: Components,
+        label_token: ?TokenIndex,
+        pub const Components = struct {
+            switch_token: TokenIndex,
+            conditon: Node.Index,
+            cases: []const Node.Index,
+        };
+    };
+
+    pub const SwitchCase = struct {
+        main_token: TokenIndex,
+        pub const Components = struct {
+            values: []const Node.Index,
+            do_token: TokenIndex,
+            target_expr: Node.Index,
+        };
+    };
+    pub const Call = struct {
+        ast: Components,
+        pub const Components = struct {
+            lparen: TokenIndex,
+            fn_expr: Node.Index,
+            params: []const Node.Index,
+        };
+    };
 };
