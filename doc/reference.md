@@ -19,7 +19,7 @@ ICBINL strips away Lua's runtime dynamicism and global leakage traps, replacing 
 | Keyword Category | Keywords Included |
 | :--- | :--- |
 | **Declarations** | `module`, `require`, `record`, `interface`, `enum`, `error`, `union`, `var`, `const`, `function`, `pub`, `distinct` |
-| **Control Flow & Blocks** | `if`, `then`, `elseif`, `else`, `while`, `do`, `for`, `in`, `end`, `return`, `switch`, `case`, `defer`, `break`, `continue` |
+| **Control Flow & Blocks** | `if`, `then`, `elseif`, `else`,`orelse`, `while`, `do`, `for`, `in`, `end`, `return`, `switch`, `case`, `defer`, `break`, `continue` |
 | **Metaprogramming** | `comptime` |
 | **C ABI & Interop** | `extern`, `export` |
 | **Memory & Layout** | `align`, `packed` |
@@ -65,7 +65,6 @@ ICBINL provides rigid, unboxed types that map directly to hardware memory layout
 | **Raw Pointers** | `rawptr` | Untyped memory address | `var addr: rawptr = null` |
 | **Type Metatype** | `type` | First-class type values at compile time | `const T: type = u32` |
 | **Arrays** | `[size:sentinel]type` | Fixed-width or sentinel-terminated arrays | `var buf: [1024:0]u8 = undefined` |
-| **Native Tuples** | `(type\|expr, ...)` | Anonymous static composite types | `var pair: (i32, f32) = (10, 3.14)` |
 
 ---
 
