@@ -5,3 +5,4 @@
 // LICENSE file in the root directory of this source tree.
 pub const Tokenizer = @import("compiler/tokenizer.zig").Tokenizer;
 pub const Token = @import("compiler/tokenizer.zig").Token;
+pub const Ast = @import("compiler/Ast.zig");

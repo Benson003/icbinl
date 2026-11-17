@@ -30,6 +30,7 @@ pub const Token = struct {
         .{ "if", .keyword_if },
         .{ "then", .keyword_then },
         .{ "else", .keyword_else },
+        .{ "orelse", .keyword_orelse },
         .{ "elseif", .keyword_elseif },
         .{ "while", .keyword_while },
         .{ "continue", .keyword_continue },
@@ -53,6 +54,7 @@ pub const Token = struct {
         .{ "addrspace", .keyword_addrspace },
         .{ "linksection", .keyword_linksection },
         .{ "test", .keyword_test },
+        .{ "unreachable", .keyword_unreachable },
     });
 
     pub fn getKeyword(bytes: []const u8) ?Tag {
@@ -79,6 +81,7 @@ pub const Token = struct {
         keyword_if,
         keyword_then,
         keyword_else,
+        keyword_orelse,
         keyword_elseif,
         keyword_while,
         keyword_continue,
@@ -102,6 +105,7 @@ pub const Token = struct {
         keyword_addrspace,
         keyword_linksection,
         keyword_test,
+        keyword_unreachable,
         equal,
         equal_equal,
         plus,
