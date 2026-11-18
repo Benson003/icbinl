@@ -463,6 +463,7 @@ pub const full = struct {
         ast: Components,
         pub const Components = struct {
             main_token: TokenIndex,
+            container_tokens: ?[]const TokenIndex,
             members: []const Node.Index,
             arg: Node.OptionalIndex,
         };
@@ -546,7 +547,7 @@ pub const full = struct {
         export_extern_inline_token: ?TokenIndex,
         lib_name: ?TokenIndex,
         name_token: ?TokenIndex,
-        container_token: ?[]const TokenIndex,
+        container_tokens: ?[]const TokenIndex,
         lparen: TokenIndex,
         ast: Components,
         pub const Param = struct {
