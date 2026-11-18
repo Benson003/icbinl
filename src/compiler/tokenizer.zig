@@ -137,6 +137,7 @@ pub const Token = struct {
         amperstand_amperstand,
         amperstand_equal,
         colon,
+        colon_colon,
         colon_equal,
         l_brace,
         r_brace,
@@ -552,6 +553,10 @@ pub const Tokenizer = struct {
                 switch (self.buffer[self.index]) {
                     '=' => {
                         result.tag = .colon_equal;
+                        self.index += 1;
+                    },
+                    ':' => {
+                        result.tag = .colon_colon;
                         self.index += 1;
                     },
                     else => result.tag = .colon,

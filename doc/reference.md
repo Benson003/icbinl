@@ -55,7 +55,7 @@ ICBINL replaces Lua's word-based logical operators (`and`, `or`, `not`) with sym
 | **Assignment & Binding** | `=`, `:=`, `+=`, `-=`, `*=`, `/=`, `&=`, `|=`, `~=`, `^=`, `<<=`, `>>=` | Explicit assignment, type-inferred declaration (`:=`), and compound updates |
 | **Pointers & Optionals** | `^`, `.*`, `.?`, `?`, `orelse` | Pointer modifier (`^`), postfix dereference (`.*`), optional unwrap (`.?`), optional type (`?`), fallback (`orelse`) |
 | **Ranges & Variadics** | `..`, `...` | Range expressions (`0..10`) and variadic parameter lists (`...`) |
-| **Namespace & Delimiters** | `:`, `.`, `( )`, `{ }`, `[ ]`, `,`, `#` | Colon namespace attachment (`M:A`), member access (`M.A`), grouping, single-line `#` comments |
+| **Namespace & Delimiters** | `:`, `.`, `( )`, `{ }`, `[ ]`, `,`, `#` | Colon namespace attachment (`M::A`), member access (`M.A`), grouping, single-line `#` comments |
 
 ---
 
@@ -100,13 +100,13 @@ M record
 end
 
 # Attaches enum A to namespace M (accessed as M.A.new)
-M:A enum
+M::A enum
     new
     active
 end
 
 # Attaches method `reset` to record M
-M:reset function(self: ^M): ()
+M::reset function(self: ^M): ()
     self.*.value = 0
 end
 ```
@@ -129,7 +129,7 @@ Drawable interface
 end
 
 
-M:print_width function (self: ^Drawable): ()
+M::print_width function (self: ^Drawable): ()
     @print(self.width)
 end
 

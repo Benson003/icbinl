@@ -39,16 +39,16 @@ pub align(4) packed record SensorState
 end
 
 # Attach an enum directly to the SensorState namespace
-SensorState:Status enum
+SensorState::Status enum
     Idle
     Sampling
     Fault
 end
 
 # Attach a method to SensorState using colon syntax
-SensorState:reset function(self: ^SensorState): ()
-    self.*.active = 0
-    self.*.reading = 0.0
+SensorState::reset function(self: ^SensorState): ()
+    self.active = 0
+    self.reading = 0.0
 end
 
 export function sample_all(sensors: ^[]SensorState): u32
