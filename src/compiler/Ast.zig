@@ -460,29 +460,25 @@ pub const full = struct {
     pub const ContainerDecl = struct {
         packed_token: ?TokenIndex,
         align_node: Node.OptionalIndex,
+        container_tokens: ?[]const TokenIndex,
         ast: Components,
         pub const Components = struct {
             main_token: TokenIndex,
-            container_tokens: ?[]const TokenIndex,
             members: []const Node.Index,
             arg: Node.OptionalIndex,
         };
     };
-
-    pub const ImpliedVarDecl = struct {
-        name_token: TokenIndex,
-        init_expr: Node.Index,
-        assign_token: TokenIndex, // The := token
-    };
-
     pub const VarDecl = struct {
         visib_token: ?TokenIndex,
         extern_export_token: ?TokenIndex,
         lib_name: ?TokenIndex,
         comptime_token: ?TokenIndex,
+        container_tokens: ?[]const TokenIndex,
         ast: Components,
+        implied: bool,
         pub const Components = struct {
-            mut_token: TokenIndex,
+            mut_token: ?TokenIndex,
+            name_token: TokenIndex,
             type_node: Node.OptionalIndex,
             align_node: Node.OptionalIndex,
             addrspace_node: Node.OptionalIndex,
@@ -493,7 +489,8 @@ pub const full = struct {
             return var_decl.visib_token orelse
                 var_decl.extern_export_token orelse
                 var_decl.comptime_token orelse
-                var_decl.ast.mut_token;
+                var_decl.ast.mut_token orelse
+                var_decl.ast.name_token;
         }
     };
     pub const Switch = struct {
@@ -588,7 +585,7 @@ pub const full = struct {
         };
     };
 
-    pub const PtrSize = enum { one, many, c, slice };
+    pub const PtrSize = enum { one, many, slice };
 };
 
 pub fn renderError(tree: Ast, err: Error, w: *std.Io.Writer) std.Io.Writer.Error!void {
